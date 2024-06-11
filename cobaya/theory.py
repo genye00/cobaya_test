@@ -40,11 +40,15 @@ from cobaya.tools import str_to_list
 from cobaya.log import LoggedError, always_stop_exceptions
 from cobaya.tools import get_class_methods
 
+import signal
+def handle_timeout(signum, frame):
+    raise TimeoutError()
 
 class Theory(CobayaComponent):
     """Base class theory that can calculate something."""
 
     speed: float = -1
+    timeout: int = 0
     stop_at_error: bool = False
     version: Optional[Union[dict, str]] = None
     params: ParamsDict
@@ -73,6 +77,7 @@ class Theory(CobayaComponent):
         self.set_cache_size(3)
         self._helpers: Dict[str, 'Theory'] = {}
         self._input_params_extra: Set[str] = set()
+        signal.signal(signal.SIGALRM, handle_timeout)
 
     def get_requirements(self) -> Union[InfoDict, Sequence[str],
                                         Sequence[Tuple[str, InfoDict]]]:
@@ -249,11 +254,19 @@ class Theory(CobayaComponent):
                      "derived": {} if want_derived else None}
             if self.timer:
                 self.timer.start()
+            signal.alarm(0)
+            if self.timeout > 0:
+                signal.alarm(self.timeout)
             try:
                 if self.calculate(state, want_derived, **params_values_dict) is False:
+                    signal.alarm(0)
                     return False
             except always_stop_exceptions:
                 raise
+            except TimeoutError:
+                self.log.info("Theory timeout after %f seconds", self.timeout)
+                signal.alarm(0)
+                return False
             except Exception as excpt:
                 if self.stop_at_error:
                     self.log.error("Error at evaluation. See error information below.")
@@ -263,6 +276,7 @@ class Theory(CobayaComponent):
                         "Ignored error at evaluation and assigned 0 likelihood "
                         "(set 'stop_at_error: True' as an option for this component "
                         "to stop here and print a traceback). Error message: %r", excpt)
+                    signal.alarm(0)
                     return False
             if self.timer:
                 self.timer.increment(self.log)
