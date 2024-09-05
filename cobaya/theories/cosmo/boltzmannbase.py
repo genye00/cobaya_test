@@ -160,14 +160,9 @@ class BoltzmannBase(Theory):
         # e.g. take maximum of all values of a requested precision parameter
         for k, v in requirements.items():
             # Products and other computations
-            if k == "Cl":
+            if k == "Cl" or k == "lensed_scal_Cl" or k == "unlensed_Cl":
                 current = self._must_provide.get(k, {})
                 v = {cl.lower(): v[cl] for cl in v}  # to lowercase
-                self._must_provide[k] = {
-                    cl.lower(): max(current.get(cl.lower(), 0), v.get(cl, 0))
-                    for cl in set(current).union(v)}
-            elif k == "unlensed_Cl":
-                current = self._must_provide.get(k, {})
                 self._must_provide[k] = {
                     cl.lower(): max(current.get(cl.lower(), 0), v.get(cl, 0))
                     for cl in set(current).union(v)}
@@ -318,8 +313,8 @@ class BoltzmannBase(Theory):
     @abstract
     def get_Cl(self, ell_factor=False, units="FIRASmuK2"):
         r"""
-        Returns a dictionary of lensed CMB power spectra and the lensing potential ``pp``
-        power spectrum.
+        Returns a dictionary of lensed total CMB power spectra and the
+        lensing potential ``pp`` power spectrum.
 
         Set the units with the keyword ``units=number|'muK2'|'K2'|'FIRASmuK2'|'FIRASK2'``.
         The default is ``FIRASmuK2``, which returns CMB :math:`C_\ell`'s in
@@ -331,13 +326,25 @@ class BoltzmannBase(Theory):
         If ``ell_factor=True`` (default: ``False``), multiplies the spectra by
         :math:`\ell(\ell+1)/(2\pi)` (or by :math:`[\ell(\ell+1)]^2/(2\pi)` in the case of
         the lensing potential ``pp`` spectrum, and :math:`[\ell(\ell+1)]^{3/2}/(2\pi)` for
-        the the cross spectra ``tp`` and ``ep``).
+        the cross spectra ``tp`` and ``ep``).
         """
 
     @abstract
     def get_unlensed_Cl(self, ell_factor=False, units="FIRASmuK2"):
         r"""
         Returns a dictionary of unlensed CMB power spectra.
+
+        For ``units`` options, see :func:`~BoltzmannBase.get_Cl`.
+
+        If ``ell_factor=True`` (default: ``False``), multiplies the spectra by
+        :math:`\ell(\ell+1)/(2\pi)`.
+        """
+
+    @abstract
+    def get_lensed_scal_Cl(self, ell_factor=False, units="FIRASmuK2"):
+        r"""
+        Returns a dictionary of lensed scalar CMB power spectra and the lensing
+        potential ``pp`` power spectrum.
 
         For ``units`` options, see :func:`~BoltzmannBase.get_Cl`.
 

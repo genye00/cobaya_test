@@ -24,7 +24,8 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12"
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13"
 ]
 requires-python = ">=3.8.0"
 dependencies = [
@@ -35,7 +36,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-test = ["pytest", "pytest-forked", "flaky", "mpi4py", "iminuit"]
+test = ["pytest", "pytest-xdist", "flaky", "mpi4py", "iminuit"]
+speed = ["numba", "mpi4py"]
 gui = ["pyside6", "matplotlib"]
 docs = [
     "sphinx", "sphinx_rtd_theme>=1.0", "sphinxcontrib-jquery",

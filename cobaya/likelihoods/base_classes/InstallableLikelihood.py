@@ -17,6 +17,7 @@ from cobaya.log import get_logger
 from cobaya.install import _version_filename
 from cobaya.component import ComponentNotInstalledError
 from cobaya.tools import VersionCheckError, resolve_packages_path
+from cobaya.functions import chi_squared
 
 
 class InstallableLikelihood(Likelihood):
@@ -25,6 +26,10 @@ class InstallableLikelihood(Likelihood):
     """
 
     install_options: InfoDict = {}
+
+    # fast convenience function, to get chi-squared (exploiting symmetry); can call
+    # self._fast_chi_squared(cov_inv, delta)
+    _fast_chi_squared = staticmethod(chi_squared)
 
     def __init__(self, *args, **kwargs):
         # Ensure check for install and version errors

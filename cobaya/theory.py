@@ -182,8 +182,8 @@ class Theory(CobayaComponent):
 
         :return: iterable of parameter names
         """
-        params = getattr(self, "params", None)
-        if params:
+
+        if params := getattr(self, "params", None):
             return [k for k, v in params.items() if
                     hasattr(v, 'get') and v.get('derived') is True]
         else:
@@ -389,10 +389,11 @@ class TheoryCollection(ComponentCollection):
                     else:
                         theory_class = get_component_class(
                             name, kind="theory", class_name=info.get("class"),
-                            logger=self.log)
+                            logger=self.log, component_path=info.get("python_path"))
                     self.add_instance(
                         name, theory_class(
-                            info, packages_path=packages_path, timing=timing, name=name))
+                            info, packages_path=packages_path, timing=timing, name=name,
+                            standalone=False))
 
     def __getattribute__(self, name):
         if not name.startswith('_'):

@@ -1,3 +1,28 @@
+## 3.5.x
+
+- Detect and fix incomplete last lines when resuming or minimizing from existing runs (#306, #378)
+- Added functions module and refactored some numerical functions into it
+
+## 3.5.4
+
+- Allow classes to have both yaml and class attributes as long as no duplicate keys
+- Added get_modified_defaults() class method to cobaya components to dynamically set/modify defaults
+
+### Cosmology
+- Option to return lensed scalar Cl's from CAMB (without tensors) (thanks @kimmywu})
+
+## 3.5.3
+
+- added --allow-changes option to cobaya-run to allow changes in the input file when resuming or minimizing
+- Updates for deprecation warnings
+- Minor optimization refactor and doc update
+
+## 3.5.2
+
+- Updates for numpy 2 and other compatibility fixes
+- Fixes #357, #358, #360, #361, #362, #368
+- Added _fast_chi_squared method to base class InstallableLikelihood
+
 ## 3.5.1
 
 ### General

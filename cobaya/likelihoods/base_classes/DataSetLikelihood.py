@@ -7,7 +7,6 @@
 """
 # Global
 import os
-from getdist import IniFile
 
 # Local
 from cobaya.log import LoggedError
@@ -17,26 +16,11 @@ from cobaya.conventions import packages_path_input
 from .InstallableLikelihood import InstallableLikelihood
 
 
-class _fast_chi_square:
-    def __get__(self, instance, owner):
-        # delay testing active camb until run time
-        try:
-            from camb.mathutils import chi_squared as fast_chi_squared
-        except ImportError:
-            def fast_chi_squared(covinv, x):
-                return covinv.dot(x).dot(x)
-
-        instance.fast_chi_squared = fast_chi_squared
-        return fast_chi_squared
-
-
 class DataSetLikelihood(InstallableLikelihood):
     """A likelihood reading parameters and file names from a .dataset plain text
     .ini file (as CosmoMC)"""
 
     _default_dataset_params: InfoDict = {}
-
-    _fast_chi_squared = _fast_chi_square()
 
     # variables defined in yaml or input dictionary
     dataset_file: str
@@ -68,6 +52,7 @@ class DataSetLikelihood(InstallableLikelihood):
         self.load_dataset_file(data_file, getattr(self, 'dataset_params', {}))
 
     def load_dataset_file(self, filename, dataset_params=None):
+        from getdist import IniFile
         if '.dataset' not in filename:
             filename += '.dataset'
         ini = IniFile(filename)
