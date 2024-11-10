@@ -551,8 +551,6 @@ class classy(BoltzmannBase):
                     state["params"], dict(self.extra_args))
                 raise
             else:
-                self.classy_module = importlib.reload(self.classy_module)
-                self.classy = self.classy_module.Class()
                 self.log.debug("Computation of cosmological products failed. "
                                "Assigning 0 likelihood and going on. "
                                "The output of the CLASS error was %s", e)
