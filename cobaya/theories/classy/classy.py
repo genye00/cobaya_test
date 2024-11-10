@@ -226,6 +226,7 @@ import platform
 from copy import deepcopy
 from typing import NamedTuple, Sequence, Union, Optional, Callable, Any
 import numpy as np
+import importlib
 
 # Local
 from cobaya.theories.cosmo import BoltzmannBase
@@ -550,6 +551,7 @@ class classy(BoltzmannBase):
                     state["params"], dict(self.extra_args))
                 raise
             else:
+                self.classy = importlib.reload(self.classy)
                 self.log.debug("Computation of cosmological products failed. "
                                "Assigning 0 likelihood and going on. "
                                "The output of the CLASS error was %s", e)
