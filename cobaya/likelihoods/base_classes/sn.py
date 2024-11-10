@@ -120,6 +120,8 @@ class SN(DataSetLikelihood):
 
     install_options = {"github_repository": "CobayaSampler/sn_data",
                        "github_release": "v1.6"}
+    
+    use_abs_mag_of_z: bool = False
 
     def init_params(self, ini):
 
@@ -257,7 +259,10 @@ class SN(DataSetLikelihood):
         # State requisites to the theory code
         reqs = {"angular_diameter_distance": {"z": self.zcmb}}
         if self.use_abs_mag:
-            reqs["Mb"] = None
+            if self.use_abs_mag_of_z:
+                reqs["abs_mag_of_z"] = {"z": self.zcmb}
+            else:
+                reqs["Mb"] = None
         return reqs
 
     def _read_covmat(self, filename):
@@ -368,7 +373,10 @@ class SN(DataSetLikelihood):
                                  angular_diameter_distances))
 
         if self.use_abs_mag:
-            Mb = params_values.get('Mb', None)
+            if self.use_abs_mag_of_z:
+                Mb = self.provider.get_abs_mag_of_z(self.zcmb)
+            else:
+                Mb = params_values.get('Mb', None)
         else:
             Mb = 0
         if self.marginalize:
