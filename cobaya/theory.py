@@ -278,6 +278,7 @@ class Theory(CobayaComponent):
                         "to stop here and print a traceback). Error message: %r", excpt)
                     signal.alarm(0)
                     return False
+            signal.alarm(0)
             if self.timer:
                 self.timer.increment(self.log)
         # make this state the current one
