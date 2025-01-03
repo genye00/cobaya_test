@@ -226,7 +226,6 @@ import platform
 from copy import deepcopy
 from typing import NamedTuple, Sequence, Union, Optional, Callable, Any
 import numpy as np
-import importlib
 
 # Local
 from cobaya.theories.cosmo import BoltzmannBase
